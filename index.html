@@ -1,0 +1,212 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>비정상 수용 광맥도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: field survey sheet — map plate on the left, numbered dig-site ledger on the right; stacks on phones */
+:root{
+  --paper:#eef0ea; --plate:#f8f9f5; --ink:#1f2622; --muted:#5d6861; --line:#c9cfc6; --region:#e3e7dd; --region-hi:#d4dccb;
+  --iron:#b5542e; --copper:#c98a1b; --tungsten:#4a6fa5; --gold:#b89412; --silver:#7d8a96; --stardust:#8a4fb0; --sulfur:#8f9a1c;
+  --accent:#2f6b4f;
+  --f-display:"Do Hyeon","IBM Plex Sans KR",sans-serif; --f-body:"IBM Plex Sans KR",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#161a18; --plate:#1d2320; --ink:#e3e8e2; --muted:#9aa59e; --line:#36403a; --region:#252d29; --region-hi:#2f3a34;
+  --iron:#e07a50; --copper:#e2a53c; --tungsten:#7d9fd6; --gold:#e0c04a; --silver:#b3bfca; --stardust:#b884db; --sulfur:#bfcb45; --accent:#6cbf95; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#161a18; --plate:#1d2320; --ink:#e3e8e2; --muted:#9aa59e; --line:#36403a; --region:#252d29; --region-hi:#2f3a34;
+  --iron:#e07a50; --copper:#e2a53c; --tungsten:#7d9fd6; --gold:#e0c04a; --silver:#b3bfca; --stardust:#b884db; --sulfur:#bfcb45; --accent:#6cbf95; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+header h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);max-width:68ch}
+.meta{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--plate);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--c,var(--muted))}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip small{font-family:var(--f-mono);opacity:.7}
+.main{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.plate{background:var(--plate);border:1px solid var(--line);border-radius:6px;padding:10px;position:sticky;top:env(safe-area-inset-top,0px)}
+@media (max-width:860px){.plate{position:static}}
+svg{display:block;width:100%;height:auto;max-height:82vh}
+.rg{fill:var(--region);stroke:var(--line);stroke-width:2}
+.rg.hi{fill:var(--region-hi)}
+.rl{font-family:var(--f-display);font-size:24px;fill:var(--muted);text-anchor:middle;pointer-events:none}
+.pin{stroke:var(--plate);stroke-width:2.5;cursor:pointer}
+.pin.sel{stroke:var(--ink);stroke-width:4}
+.pn{font:600 15px var(--f-mono);fill:#fff;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.compass{font:500 18px var(--f-mono);fill:var(--muted)}
+.legend{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:6px 4px 0}
+.ledger{display:grid;gap:16px;min-width:0}
+.reg h2{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0 0 4px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.reg h2 span{font:400 12px var(--f-mono);color:var(--muted)}
+.bars{display:flex;height:8px;border-radius:2px;overflow:hidden;margin:2px 0 8px;background:var(--line)}
+.bars b{display:block;height:100%}
+.spot{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.spot:hover .where,.spot.sel .where{color:var(--accent)}
+.num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--f-mono);color:#fff;margin-top:2px}
+.where{font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.tag{font:500 11.5px var(--f-mono);padding:1px 7px;border-radius:3px;border:1px solid var(--line);color:var(--muted)}
+.tag.coast{border-color:var(--tungsten);color:var(--tungsten)}
+.comp{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px;font:12.5px var(--f-mono)}
+.comp em{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+.comp em i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.note{font-size:13px;color:var(--muted);max-width:75ch;border-top:1px solid var(--line);padding-top:12px}
+.note b{color:var(--ink)}
+.hidden-r{display:none}
+@media (prefers-reduced-motion:no-preference){.pin{transition:r .2s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="meta">ONCE HUMAN · 비정상 수용(Deviation Secure) · 광맥 노드 8,221개 분석</div>
+    <h1>비정상 수용 맵 광맥도</h1>
+    <p>지역 안에서도 광물이 몰려 있는 구역만 골라 번호로 찍었습니다. 위쪽이 북쪽입니다. 광물을 고르면 그 광물이 많은 곳만 남고, 번호를 누르면 오른쪽 설명으로 이동합니다.</p>
+  </header>
+
+  <div class="chips" id="chips" role="group" aria-label="광물 선택"></div>
+
+  <div class="main">
+    <div class="plate">
+      <svg id="map" viewBox="-110 -850 960 1370" role="img" aria-label="비정상 수용 맵 지역 경계와 광물 밀집 구역"></svg>
+      <div class="legend"><span>원 크기 = 반경 약 400m 안 광맥 수</span><span>파란 테두리 태그 = 해안 쪽</span></div>
+    </div>
+    <div class="ledger" id="ledger"></div>
+  </div>
+
+  <div class="note">
+    <p><b>데이터 출처:</b> oncehuman.th.gl 인터랙티브 지도의 비정상 수용 노드 데이터(2026-10-18 기준)를 지역 경계와 맞춰 집계했습니다. 광맥은 서버·채널마다 실제 생성 여부가 달라서, 표시된 곳은 “스폰 지점이 몰린 곳”입니다.</p>
+    <p><b>해안 판정:</b> 해변에만 생기는 조개 바위(해발 약 50m) 위치를 기준으로, 350m 안이면 해안가 또는 해안 절벽, 800m 안이면 해안 인근으로 표시했습니다.</p>
+    <p><b>희귀 광물 메모:</b> 알루미늄 광석은 이 맵에 1개(블랙펠 서부)뿐입니다. 차가운 결정 광석은 7개로, 해변가의 낡은 집 북서쪽 약 1km 해안가에 2개, 매달린 선박의 얼음 동굴과 툰드라 모노리스 안쪽에 나머지가 있습니다. 주석 광석은 이 맵에 없습니다.</p>
+  </div>
+</div>
+
+<script>
+const ORES={iron:["철광석","--iron",2815],copper:["동광석","--copper",2445],sulfur:["유황","--sulfur",1966],tungsten:["텅스텐","--tungsten",655],gold:["금광석","--gold",158],stardust:["스타더스트","--stardust",113],silver:["은광석","--silver",69]};
+const KEYS=["iron","copper","tungsten","gold","silver","stardust","sulfur"];
+// regions: polygon in game units /10 as "x y" (x = north, y = east)
+const REG={
+ BA:{n:"블랙펠 지역",t:[103,269,17,0,2,3,208],p:"-2 433;-38 463;-57 543;-103 527;-154 590;-233 572;-242 538;-207 492;-274 458;-263 342;-230 327;-177 369;-142 313;-73 313;-4 431"},
+ IRLR:{n:"아이언리버 하류",t:[481,474,22,10,14,25,351],p:"-38 574;-97 529;-154 591;-233 574;-244 538;-209 492;-321 438;-436 554;-441 700;-414 817;-42 817;-44 758;-113 655;-65 636;-38 575"},
+ BW:{n:"블랙펠 서부",t:[480,396,22,7,9,15,358],p:"327 383;313 364;260 415;238 369;206 366;127 442;114 494;76 470;22 513;-33 498;-57 519;-36 574;-52 620;-111 655;-42 758;-41 817;236 817;241 586;327 385"},
+ IRUR:{n:"아이언리버 상류",t:[350,250,7,0,0,2,222],p:"90 246;54 223;52 150;87 135;55 92;31 116;15 68;-50 63;-71 90;-148 74;-167 118;-242 132;-337 358;-490 498;-455 550;-420 548;-321 436;-274 441;-263 340;-230 326;-177 367;-142 311;-82 314;-60 217;-18 247;10 206;17 246;90 247"},
+ BN:{n:"블랙펠 북부",t:[231,185,13,14,17,27,145],p:"185 327;113 255;17 247;10 207;-18 249;-63 220;-82 220;-82 287;-2 425;-41 494;18 511;76 468;114 492;185 329"},
+ BM:{n:"흑석 산맥",t:[142,111,20,1,0,0,73],p:"498 698;362 532;425 484;401 444;316 444;278 476;236 630;238 817;498 817;498 700"},
+ AT:{n:"아게이트 툰드라",t:[387,303,40,1,0,5,228],p:"820 476;820 817;500 817;495 681;362 527;431 474;436 338;521 310;639 458;818 476"},
+ IB:{n:"이글루 베이",t:[89,68,75,16,1,2,71],p:"820 238;820 474;719 481;639 457;551 346;628 287;686 316;719 247;818 238"},
+ UPA:{n:"부동항 지역",t:[146,111,117,33,11,15,102],p:"820 -49;820 113;647 108;532 71;510 -31;545 -82;622 -46;818 -49"},
+ AM:{n:"아르캄 산맥",t:[216,140,159,23,0,1,91],p:"566 84;519 57;513 -30;446 -49;386 -2;382 54;444 100;425 138;452 177;426 244;322 324;327 454;401 442;426 481;447 407;423 359;518 314;530 260;497 220;564 86"},
+ PH:{n:"낙원 중심",t:[190,138,163,53,15,18,117],p:"820 114;820 236;719 246;686 314;628 286;554 338;498 220;567 84;818 114"}
+};
+const ORDER=["UPA","PH","IB","AM","AT","BM","BN","BW","BA","IRUR","IRLR"];
+const BLURB={
+ UPA:"북쪽 끝 항구 지대. 텅스텐·금·은·스타더스트가 한 언덕에 같이 나오는, 맵에서 가장 알찬 구역이 있습니다.",
+ PH:"텅스텐과 금이 맵 전체 1위. 뒤집힌 유적과 멜트워터 항구 사이 해안 쪽이 핵심입니다.",
+ IB:"광맥 수는 적지만 버려진 은신처 남쪽 해안가에 텅스텐·금이 몰려 있습니다.",
+ AM:"고지대(해발 300~800m) 텅스텐 산지. 눈사태 모노리스 주변이 가장 촘촘합니다.",
+ AT:"철·구리 위주의 넓은 지역. 남쪽 해안을 따라 조개 바위도 가장 많습니다.",
+ BM:"철·구리 중심. 네스트우드 케이블카 북쪽은 텅스텐도 섞여 나옵니다.",
+ BN:"남쪽 지역 중 스타더스트·은이 가장 많은 곳. 썬샤인 농장 북동쪽 고원이 노다지입니다.",
+ BW:"철·구리·유황 대량 채집용. 중앙부에서 스타더스트·은이 같이 나옵니다.",
+ BA:"구리와 유황 비중이 특히 높은 지역입니다.",
+ IRUR:"철 위주. 금·은은 거의 없습니다.",
+ IRLR:"철·구리 최대 산지. 리플비 북서쪽 강변은 스타더스트·은·금까지 섞인 복합 광맥입니다."
+};
+// spots: [region, where, terrain, elevation, x, y, {ore:count}]
+const S=[
+ ["UPA","올드쉽 농장 일대 (길가 피크닉 바로 옆)","해안 절벽·언덕",209,6068,-12,{iron:40,tungsten:38,copper:30,sulfur:24,gold:15,stardust:10,silver:9}],
+ ["UPA","산책로 통나무집 주변","해안가",64,7105,96,{iron:24,tungsten:23,sulfur:23,copper:17,gold:2}],
+ ["UPA","임시 조사 캠프 북동쪽 300m","해안 절벽·언덕",101,6426,820,{iron:16,copper:11,sulfur:10,tungsten:8,gold:2,stardust:2,silver:1}],
+ ["PH","뒤집힌 유적 동쪽 250m","해안 인근 내륙",206,6086,1435,{iron:37,tungsten:34,copper:33,sulfur:26,gold:17,stardust:10,silver:9}],
+ ["PH","멜트워터 항구 남서쪽 450m","해안 인근 내륙",147,6526,2506,{tungsten:37,iron:33,copper:27,sulfur:26,gold:13,silver:4,stardust:4}],
+ ["PH","낙원 동쪽 입구 남서쪽 600m","내륙",283,5605,2244,{iron:29,tungsten:20,copper:17,sulfur:17,gold:4,stardust:1}],
+ ["IB","버려진 은신처 남쪽 250m","해안가",72,6291,3920,{tungsten:30,iron:29,copper:26,sulfur:25,gold:12,silver:1,stardust:1}],
+ ["IB","해변가의 낡은 집 서쪽 300m","해안가",87,7066,4396,{sulfur:20,iron:17,copper:12,tungsten:11,gold:1}],
+ ["IB","멜트워터 항구 북동쪽 600m","해안가",66,7253,3170,{iron:14,sulfur:11,copper:9,tungsten:7,gold:1}],
+ ["AM","눈사태 모노리스 경계구역 안쪽","고산 내륙",706,4710,75,{iron:35,tungsten:30,copper:25,sulfur:19,gold:10}],
+ ["AM","공중 초소 서쪽 300m","내륙",319,5108,1391,{iron:29,tungsten:28,copper:21,sulfur:15,gold:1}],
+ ["AM","측정 지점 653 서쪽 300m","고산 내륙",675,4334,2871,{iron:31,copper:17,tungsten:13,sulfur:10,gold:2}],
+ ["AM","그레이트 리버 수용 구역 남쪽 400m","고산 내륙",720,3507,3438,{tungsten:24,iron:19,copper:14,sulfur:11,gold:4}],
+ ["AT","식품 공장 창고 북쪽 300m","내륙 저지대",73,5242,4627,{iron:44,copper:38,sulfur:25,tungsten:6,stardust:2}],
+ ["AT","무스 식품 공장 북서쪽 550m","내륙",204,5183,3701,{iron:41,copper:38,sulfur:16,tungsten:5,stardust:2}],
+ ["AT","무스시 교외 정류장 광산 공방 서쪽 200m","해안 인근 내륙",84,4355,5353,{iron:41,copper:32,sulfur:20,tungsten:3}],
+ ["AT","솔밭 사냥터 남동쪽 300m","해안 인근 내륙",69,6192,4817,{iron:36,copper:29,sulfur:24,tungsten:1}],
+ ["BM","네스트우드 케이블카 북쪽 250m","내륙",327,3617,4796,{iron:34,copper:26,tungsten:13,sulfur:13}],
+ ["BM","파이어하이드 동굴 남쪽 250m","해안 절벽·언덕",170,3415,5917,{iron:31,copper:26,sulfur:14}],
+ ["BM","흑석 등대 서쪽 550m","해안가",83,4120,6500,{iron:17,copper:16,sulfur:14}],
+ ["BN","썬샤인 농장 북동쪽 1km 고원","내륙",287,155,3733,{iron:37,copper:33,sulfur:25,stardust:11,silver:8,gold:7,tungsten:5}],
+ ["BN","흰 절벽 기지 주변","내륙",320,1044,3476,{iron:34,copper:27,sulfur:20,stardust:6,tungsten:5,gold:4,silver:4}],
+ ["BN","썬샤인 농장 주변","내륙",207,-378,2999,{iron:28,copper:27,sulfur:19,silver:1,stardust:1}],
+ ["BW","블랙펠 서부 중앙부","내륙",137,1101,5750,{iron:40,copper:34,sulfur:28,stardust:8,silver:6,gold:4,tungsten:1}],
+ ["BW","블랙펠 서부 북동부","내륙",150,1647,6523,{iron:41,copper:37,sulfur:34,tungsten:6}],
+ ["BW","블랙펠 서부 남동부","내륙",130,178,6698,{iron:41,copper:36,sulfur:31}],
+ ["BW","네스트우드 케이블카 남쪽 1km","내륙",238,2320,4794,{iron:39,copper:33,sulfur:26,tungsten:3,stardust:2,gold:1,silver:1}],
+ ["BA","블랙펠 유전 주변","내륙",134,-1596,5155,{copper:39,sulfur:39,iron:22,tungsten:3,stardust:1}],
+ ["BA","블랙펠 붕괴 구역 주변","내륙",172,-1343,4284,{copper:38,sulfur:30,iron:23,tungsten:4}],
+ ["BA","썬샤인 농장 남동쪽 900m","내륙",170,-913,3479,{copper:29,sulfur:21,iron:10,tungsten:3,silver:1,stardust:1}],
+ ["IRUR","No.73 에테르 추출 포인트 남쪽 450m","내륙",244,-2113,2716,{iron:41,copper:29,sulfur:24,stardust:2,tungsten:1}],
+ ["IRUR","잊혀진 모노리스 북서쪽 250m","내륙",313,-1270,1880,{iron:31,copper:23,sulfur:23,tungsten:2}],
+ ["IRUR","파괴된 캠프 북쪽 300m","내륙",149,-3810,4472,{iron:34,copper:22,sulfur:19,tungsten:1}],
+ ["IRLR","리플비 북서쪽 250m (바람 농장 강변)","해안 인근 내륙",95,-3859,7270,{copper:37,iron:36,sulfur:35,stardust:9,silver:8,gold:5}],
+ ["IRLR","증강현실 연구소 서쪽 450m","내륙",146,-1708,6465,{iron:43,copper:39,sulfur:23,tungsten:3,stardust:2,gold:1,silver:1}],
+ ["IRLR","알칼크 시내","내륙",168,-2561,6163,{iron:40,copper:34,sulfur:25,stardust:5,tungsten:4,silver:1}],
+ ["IRLR","바다 리조트 북쪽 450m","해안 인근 내륙",169,-2237,7359,{copper:37,iron:33,sulfur:28,tungsten:1,gold:1,silver:1,stardust:1}]
+];
+S.forEach((s,i)=>s.id=i+1);
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let cur="all", selId=null;
+const NS="http://www.w3.org/2000/svg", svg=document.getElementById("map");
+const pt=(x,y)=>[y/10,-x/10];
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+const gR=el("g",{}),gP=el("g",{});
+for(const k of ORDER){const r=REG[k];const pts=r.p.split(";").map(s=>s.split(" ").map(Number));
+  r.el=el("polygon",{class:"rg",points:pts.map(([x,y])=>[y,-x].join(",")).join(" ")},gR);
+  const cx=pts.reduce((a,p)=>a+p[1],0)/pts.length, cy=-pts.reduce((a,p)=>a+p[0],0)/pts.length;
+  const t=el("text",{class:"rl",x:cx,y:cy},gR);t.textContent=r.n;}
+el("text",{class:"compass",x:-90,y:-810}).textContent="N ↑";
+function dominant(c){let b=null,v=-1;for(const k in c)if(c[k]>v){v=c[k];b=k}return b}
+function draw(){
+  gP.innerHTML="";
+  const vis=S.map(s=>{const n=cur==="all"?Object.values(s[6]).reduce((a,b)=>a+b,0):(s[6][cur]||0);return {s,n}}).filter(o=>o.n>0).sort((a,b)=>b.n-a.n);
+  for(const {s,n} of [...vis].reverse()){
+    const [X,Y]=pt(s[4],s[5]);const r=cur==="all"?8+Math.sqrt(n)*1.9:9+Math.sqrt(n)*3.4;
+    const col=css(ORES[cur==="all"?dominant(s[6]):cur][1]);
+    const c=el("circle",{class:"pin"+(selId===s.id?" sel":""),cx:X,cy:Y,r,fill:col,"fill-opacity":.88},gP);
+    c.addEventListener("click",()=>pick(s.id,true));
+    const t=el("text",{class:"pn",x:X,y:Y},gP);t.textContent=s.id;
+    el("title",{},c).textContent=REG[s[0]].n+" · "+s[1];
+  }
+  for(const k of ORDER){const v=cur==="all"?1:REG[k].t[KEYS.indexOf(cur)];REG[k].el.classList.toggle("hi",cur!=="all"&&v>=Math.max(...ORDER.map(q=>REG[q].t[KEYS.indexOf(cur)]))*0.5)}
+  ledger();
+}
+function ledger(){
+  const L=document.getElementById("ledger");L.innerHTML="";
+  const regs=cur==="all"?ORDER:[...ORDER].sort((a,b)=>REG[b].t[KEYS.indexOf(cur)]-REG[a].t[KEYS.indexOf(cur)]);
+  for(const k of regs){const r=REG[k];const spots=S.filter(s=>s[0]===k&&(cur==="all"||s[6][cur]));
+    const total=r.t.reduce((a,b)=>a+b,0);
+    if(cur!=="all"&&!r.t[KEYS.indexOf(cur)])continue;
+    const sec=document.createElement("section");sec.className="reg";
+    const head=cur==="all"?`광맥 ${total.toLocaleString()}개`:`${ORES[cur][0]} ${r.t[KEYS.indexOf(cur)]}개 · 맵 전체의 ${Math.round(r.t[KEYS.indexOf(cur)]/ORES[cur][2]*100)}%`;
+    sec.innerHTML=`<h2>${r.n}<span>${head}</span></h2><div class="bars">${KEYS.map((o,i)=>`<b style="width:${r.t[i]/total*100}%;background:var(${ORES[o][1]})" title="${ORES[o][0]} ${r.t[i]}"></b>`).join("")}</div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">${BLURB[k]}</div>`;
+    for(const s of spots){const d=document.createElement("div");d.className="spot"+(selId===s.id?" sel":"");d.id="s"+s.id;
+      const dom=cur==="all"?dominant(s[6]):cur;
+      d.innerHTML=`<div class="num" style="background:var(${ORES[dom][1]})">${s.id}</div><div style="min-width:0"><div class="where">${s[1]}</div><div class="tags"><span class="tag${/해안/.test(s[2])?" coast":""}">${s[2]}</span><span class="tag">해발 ${s[3]}m</span></div><div class="comp">${Object.entries(s[6]).sort((a,b)=>b[1]-a[1]).map(([o,v])=>`<em style="--c:var(${ORES[o][1]})${cur!=="all"&&o!==cur?";opacity:.45":""}"><i></i>${ORES[o][0]} ${v}</em>`).join("")}</div></div>`;
+      d.addEventListener("click",()=>pick(s.id,false));sec.appendChild(d)}
+    L.appendChild(sec)}
+}
+function pick(id,scroll){selId=selId===id?null:id;draw();if(scroll&&selId){const t=document.getElementById("s"+id);t&&t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"})}}
+const chips=document.getElementById("chips");
+const mk=(key,label,color,count)=>{const b=document.createElement("button");b.className="chip";b.id="chip-"+key;b.setAttribute("aria-pressed",key===cur);b.innerHTML=(color?`<i style="--c:var(${color})"></i>`:"")+label+(count?` <small>${count.toLocaleString()}</small>`:"");b.onclick=()=>{cur=key;selId=null;[...chips.children].forEach(c=>c.setAttribute("aria-pressed",c===b));draw()};chips.appendChild(b)};
+mk("all","전체 보기");
+for(const k of ["tungsten","gold","stardust","silver","iron","copper","sulfur"])mk(k,ORES[k][0],ORES[k][1],ORES[k][2]);
+draw();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+</script>
+
+</body></html>
